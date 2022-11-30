@@ -1,0 +1,65 @@
+
+	      <h4 crass="text-left"><span class="pr-4 pl-4" style="background-color:whitesmoke;">ショッピングカート</span></h4>
+	    </div>
+	    <div class="col-2">
+	      <span class="text-right"><%= link_to "カートを空にする", clear_all_cart_items_path, method: :delete, class:"btn btn-sm btn-danger", style: "border-radius: 5px;" %></span>
+	    </div>
+	  </div>
+	  <div class="row mt-2">
+	    <div class="col-md-11 offset-md-1">
+	      <table class="table table-bordered">
+	        <thead>
+	          <tr style="background-color:whitesmoke;">
+	            <th style="width:450px;">商品名</th>
+	            <th>単価(税込)</th>
+	            <th>数量</th>
+	            <th>小計</th>
+	            <th></th>
+	          </tr>
+	        </thead>
+	        <tbody>
+	          
+	          <% @cart_items.each do |cart_item| %>
+	          <tr style="line-height:50px;">
+	            <td><%= image_tag cart_item.item.image, :size =>'50x50' %><%= cart_item.item.name %></td>
+	            <td><%= cart_item.item.with_tax_price.floor.to_s(:delimited) %></td>
+	            <%= form_with model: cart_item, url: cart_item_path(cart_item.id) do |f| %>
+	            
+	            <td style="width:150px;"><%= f.select :amount, *[1..5] %>
+	            <%= f.submit "変更", class:"btn btn-sm btn-success", style: "border-radius: 5px;" %></td>
+	            <% end %>
+	              
+	            <td style="width:150px;"><%= cart_item.subtotal.floor.to_s(:delimited) %></td>
+	            <% @total +=  cart_item.subtotal %>
+	            <td class="text-center">
+	            <% if cart_item.customer.id == current_customer.id %>  
+	              <%= link_to "削除する", cart_item_path(cart_item), method: :delete, class:"btn btn-sm btn-danger", style: "border-radius: 5px;" %></td>
+	            <% end %>
+	          </tr>
+	          <% end %>
+	         
+	        </tbody>
+	        
+	      </table>
+	      <table class="table">
+	        <div class="row mt-5">
+	          <div class="col-md-8 offset-md-1">
+	            <tr>
+	              <td><%= link_to "買い物を続ける", items_path, class:"btn btn-md btn-primary", style: "border-radius: 5px;" %></td>
+	              <td></td>
+	              <td></td>
+	              <td class="table-bordered", style="background-color:whitesmoke; width:130px;">合計金額</td>
+	              <td class="table-bordered"><%= @total.floor.to_s(:delimited) %></td>
+	            </tr>
+	            <tr>
+	              <td></td>
+	              <td class="text-center">
+	                <% unless @cart_items.empty? %>
+	                  <%= link_to "情報入力に進む", new_order_path, class:"btn btn-md btn-success", style: "border-radius: 5px;" %></td>
+	                <% end %>
+	            </tr>
+	          </div>
+	          
+	        </div>
+	      </table>
+	      
